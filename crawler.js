@@ -34,34 +34,92 @@ async function main() {
       console.log(`Buscando recrutadores para: ${company}`);
 
       // Buscar empresa
-      await driver.get(`https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(company)}`);
-      await driver.wait(until.elementLocated(By.css('.entity-result__title-text')), 5000);
+      const searchUrl = `https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(company)}`;
+      console.log(`Navegando para: ${searchUrl}`);
+      await driver.get(searchUrl);
 
-      // Clicar na primeira empresa
-      const companyLink = await driver.findElement(By.css('.entity-result__title-text a'));
+      // Aguardar carregamento da página
+      await driver.sleep(3000);
+
+      // Tentar diferentes seletores para o resultado da empresa
+      let companyLink;
+      try {
+        companyLink = await driver.wait(until.elementLocated(By.css('.entity-result__title-text a')), 10000);
+      } catch (e) {
+        console.log('Tentando seletor alternativo...');
+        try {
+          companyLink = await driver.wait(until.elementLocated(By.css('a[data-test-id="search-result-company-name"]')), 10000);
+        } catch (e2) {
+          console.log(`Nenhum resultado encontrado para ${company}. Pulando...`);
+          continue;
+        }
+      }
+
       await companyLink.click();
 
       // Aguardar página da empresa
-      await driver.wait(until.urlContains('/company/'), 5000);
+      await driver.wait(until.urlContains('/company/'), 10000);
+      console.log(`Página da empresa carregada: ${driver.getCurrentUrl()}`);
 
       // Buscar recrutadores (pessoas)
-      await driver.get(`${driver.getCurrentUrl()}/people/?keywords=tech%20recruiter`);
+      const peopleUrl = `${await driver.getCurrentUrl()}/people/?keywords=tech%20recruiter`;
+      console.log(`Buscando pessoas: ${peopleUrl}`);
+      await driver.get(peopleUrl);
+
+      // Aguardar carregamento
+      await driver.sleep(3000);
 
       // Aguardar resultados
-      await driver.wait(until.elementLocated(By.css('.entity-result__item')), 5000);
-
-      // Pegar lista de recrutadores
-      const recruiters = await driver.findElements(By.css('.entity-result__item'));
+      let recruiters;
+      try {
+        recruiters = await driver.wait(until.elementsLocated(By.css('.entity-result__item')), 10000);
+      } catch (e) {
+        console.log('Tentando seletor alternativo para pessoas...');
+        try {
+          recruiters = await driver.wait(until.elementsLocated(By.css('[data-test-id="search-result-entity"]')), 10000);
+        } catch (e2) {
+          console.log(`Nenhum recrutador encontrado para ${company}. Pulando...`);
+          continue;
+        }
+      }
 
       for (const recruiter of recruiters.slice(0, 5)) { // Limitar a 5 por empresa
         try {
-          // Clicar no botão "Conectar" ou similar
-          const connectButton = await recruiter.findElement(By.css('button[aria-label*="Conectar"]'));
+          // Tentar encontrar botão de conectar
+          let connectButton;
+          try {
+            connectButton = await recruiter.findElement(By.css('button[aria-label*="Conectar"]'));
+          } catch (e) {
+            try {
+              connectButton = await recruiter.findElement(By.css('button[aria-label*="Connect"]'));
+            } catch (e2) {
+              console.log('Botão de conectar não encontrado. Pulando...');
+              continue;
+            }
+          }
           await connectButton.click();
 
           // Aguardar modal e enviar convite
-          await driver.wait(until.elementLocated(By.css('.send-invite__actions button[aria-label="Enviar"]')), 5000);
-          await driver.findElement(By.css('.send-invite__actions button[aria-label="Enviar"]')).click();
+          await driver.sleep(2000);
+          let sendButton;
+          try {
+            sendButton = await driver.wait(until.elementLocated(By.css('.send-invite__actions button[aria-label="Enviar"]')), 5000);
+          } catch (e) {
+            try {
+              sendButton = await driver.wait(until.elementLocated(By.css('button[aria-label="Send"]')), 5000);
+            } catch (e2) {
+              console.log('Botão de enviar não encontrado. Fechando modal...');
+              // Tentar fechar modal
+              try {
+                const closeButton = await driver.findElement(By.css('button[aria-label="Dismiss"]'));
+                await closeButton.click();
+              } catch (e3) {
+                console.log('Não conseguiu fechar modal.');
+              }
+              continue;
+            }
+          }
+          await sendButton.click();
 
           console.log('Convite enviado');
         } catch (e) {
@@ -69,7 +127,7 @@ async function main() {
         }
 
         // Delay para evitar rate limiting
-        await driver.sleep(2000);
+        await driver.sleep(5000);
       }
     }
 
