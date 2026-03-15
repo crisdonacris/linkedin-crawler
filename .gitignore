@@ -1,5 +1,5 @@
 node_modules/
--credentials.json
+credentials.json
 node_modules/@bazel/runfiles/repository.js
 node_modules/@bazel/runfiles/runfiles.d.ts
 node_modules/@bazel/runfiles/runfiles.js
