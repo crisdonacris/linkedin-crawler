@@ -26,21 +26,21 @@ Este projeto utiliza Selenium WebDriver com Node.js para automatizar a busca e a
 
 ## Configuração
 
-1. Crie um arquivo `companies.json` na raiz do projeto com a lista de empresas:
+1. Crie um arquivo `credentials.json` na raiz do projeto com suas credenciais do LinkedIn:
+   ```json
+   {
+     "username": "seu_email@linkedin.com",
+     "password": "sua_senha"
+   }
+   ```
+
+2. Crie um arquivo `companies.json` na raiz do projeto com a lista de empresas:
    ```json
    [
      "Empresa A",
      "Empresa B",
      "Empresa C"
    ]
-   ```
-
-2. Configure suas credenciais do LinkedIn no arquivo `config.js` (não incluído por segurança):
-   ```javascript
-   module.exports = {
-     username: 'seu_email@exemplo.com',
-     password: 'sua_senha'
-   };
    ```
 
 ## Uso

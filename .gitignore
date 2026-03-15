@@ -1,13 +1,5 @@
-node_modules/.package-lock.json
-node_modules/.bin/chromedriver
-node_modules/.bin/extract-zip
-node_modules/@bazel/runfiles/index.d.ts
-node_modules/@bazel/runfiles/index.js
-node_modules/@bazel/runfiles/package.json
-node_modules/@bazel/runfiles/paths.d.ts
-node_modules/@bazel/runfiles/paths.js
-node_modules/@bazel/runfiles/README.md
-node_modules/@bazel/runfiles/repository.d.ts
+node_modules/
+-credentials.json
 node_modules/@bazel/runfiles/repository.js
 node_modules/@bazel/runfiles/runfiles.d.ts
 node_modules/@bazel/runfiles/runfiles.js

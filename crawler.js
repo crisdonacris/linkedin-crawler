@@ -2,11 +2,8 @@ const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const fs = require('fs');
 
-// Configurações - substitua pelas suas credenciais
-const config = {
-  username: '-@gmail.com',
-  password: '-'
-};
+// Carregar configurações do arquivo JSON
+const config = JSON.parse(fs.readFileSync('credentials.json', 'utf8'));
 
 async function main() {
   // Configurar o driver do Chrome
