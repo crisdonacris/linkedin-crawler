@@ -1,0 +1,16 @@
+{
+  "name": "linkedin-crawler",
+  "version": "1.0.0",
+  "description": "Selenium-based LinkedIn crawler to find and add tech recruiters",
+  "main": "crawler.js",
+  "scripts": {
+    "start": "node crawler.js"
+  },
+  "dependencies": {
+    "selenium-webdriver": "^4.15.0",
+    "chromedriver": "^119.0.0"
+  },
+  "keywords": ["selenium", "linkedin", "crawler", "recruiter"],
+  "author": "",
+  "license": "ISC"
+}
